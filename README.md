@@ -1,2 +1,2 @@
 # MHB-Ecommerce
-Sell your products through this project
+This is an E-commerce project made by django and bootstrap
