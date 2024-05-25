@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from MHBCommerce.forms import ContactForm
 
 
 def home_page(request):
@@ -19,11 +20,12 @@ def aboutus_page(request):
 def contact_page(request):
 
     if request.method == "POST":
-        print(request.method)
-        print(request.POST)
+        # print(request.method)
+        # print(request.POST)
         print(request.POST.get('Email'))
     context = {
         'title': "Contact Us",
         'subtitle': "Keep in touch with us",
+
     }
     return render(request, "Contact/view.html", context)
