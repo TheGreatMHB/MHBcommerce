@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from MHBCommerce.forms import ContactForm, LoginForm
-from django.contrib.auth import login, logout, authenticate
+from MHBCommerce.forms import ContactForm, LoginForm, RegisterForm
+from django.contrib.auth import login, logout, authenticate, get_user_model
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 
 def home_page(request):
@@ -36,7 +37,28 @@ def contact_page(request):
 
 
 def register_page(request):
-    pass
+    register_form = RegisterForm(request.POST or None)
+    context = {
+        'form': register_form
+    }
+    if register_form.is_valid():
+        print(register_form.cleaned_data)
+        first_name = register_form.cleaned_data.get('first_name')
+        last_name = register_form.cleaned_data.get('last_name')
+        username = register_form.cleaned_data.get('username')
+        email = register_form.cleaned_data.get('email')
+        password = register_form.cleaned_data.get('password')
+        new_user = User.objects.create_user(
+            username=username, email=email, password=password, first_name=first_name, last_name=last_name)
+        print(new_user)
+
+        messages.success(
+            request, "Account Created successfully for " + username)
+        return redirect('/login')
+    else:
+        messages.error(request, "Everything is fucked ...")
+
+    return render(request, "auth/register.html", context)
 
 
 def login_page(request):
@@ -50,24 +72,21 @@ def login_page(request):
     print(request.user.is_authenticated)
 
     if login_form.is_valid():
-        # username = request.POST.get('username')
-        # password = request.POST.get('password')
         username = login_form.cleaned_data.get('username')
         password = login_form.cleaned_data.get('password')
-
         user = authenticate(request, username=username, password=password)
+        print(user)
 
         if user is not None:
             login(request, user)
-            print(request.user.is_authenticated)
-            print(user)
+            messages.success(
+                request, "Logged in successfully")
             return redirect('/')
+
         else:
-            messages.add_message(request, messages.INFO,
-                                 "wrong user / pass")
+            messages.error(request, "Everything is fucked ...")
             return redirect('/login')
 
-    # print(login_form.cleaned_data)
     return render(request, "auth/login.html", context)
 
 
