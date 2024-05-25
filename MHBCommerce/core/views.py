@@ -17,7 +17,13 @@ def aboutus_page(request):
 
 
 def contact_page(request):
-    context = {
 
+    if request.method == "POST":
+        print(request.method)
+        print(request.POST)
+        print(request.POST.get('Email'))
+    context = {
+        'title': "Contact Us",
+        'subtitle': "Keep in touch with us",
     }
-    return render(request, "contact.html", context)
+    return render(request, "Contact/view.html", context)
